@@ -1,2 +1,16 @@
 .vscode
 __pycache__
+
+# ---- colcon / ROS build artifacts ----
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
+# ---- generated / local dev files ----
+compile_commands.json
+__pycache__/
+**/__pycache__/
+*.py[cod]
