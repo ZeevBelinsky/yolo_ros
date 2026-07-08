@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Miguel Ángel González Santamarta
+# Copyright (C) 2024 Miguel Ángel González Santamarta
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,7 @@ def generate_launch_description():
                     )
                 ),
                 launch_arguments={
-                    "model_type": "YOLOE",
-                    "model": LaunchConfiguration("model", default="yoloe-26m-seg.pt"),
+                    "model": LaunchConfiguration("model", default="yolo26m.pt"),
                     "tracker": LaunchConfiguration("tracker", default="bytetrack.yaml"),
                     "device": LaunchConfiguration("device", default="cuda:0"),
                     "enable": LaunchConfiguration("enable", default="True"),

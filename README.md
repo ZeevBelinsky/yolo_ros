@@ -4,15 +4,16 @@ ROS 2 wrap for YOLO models from [Ultralytics](https://github.com/ultralytics/ult
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/GitHub-GPL--3.0-informational)](https://opensource.org/license/gpl-3-0) [![GitHub release](https://img.shields.io/github/release/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/releases) [![Code Size](https://img.shields.io/github/languages/code-size/mgonzs13/yolo_ros.svg?branch=main)](https://github.com/mgonzs13/yolo_ros?branch=main) [![Dependencies](https://img.shields.io/librariesio/github/mgonzs13/yolo_ros?branch=main)](https://libraries.io/github/mgonzs13/yolo_ros?branch=main) [![Last Commit](https://img.shields.io/github/last-commit/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/commits/main) [![GitHub issues](https://img.shields.io/github/issues/mgonzs13/yolo_ros)](https://github.com/mgonzs13/yolo_ros/issues) [![GitHub pull requests](https://img.shields.io/github/issues-pr/mgonzs13/yolo_ros)](https://github.com/mgonzs13/yolo_ros/pulls) [![Contributors](https://img.shields.io/github/contributors/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/graphs/contributors) [![Python Formatter Check](https://github.com/mgonzs13/yolo_ros/actions/workflows/python-formatter.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/python-formatter.yml?branch=main)
+[![License: GPL](https://img.shields.io/badge/GitHub-GPL--3.0-informational)](https://opensource.org/license/gpl-3-0) [![GitHub release](https://img.shields.io/github/release/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/releases) [![Code Size](https://img.shields.io/github/languages/code-size/mgonzs13/yolo_ros.svg?branch=main)](https://github.com/mgonzs13/yolo_ros?branch=main) [![Dependencies](https://img.shields.io/librariesio/github/mgonzs13/yolo_ros?branch=main)](https://libraries.io/github/mgonzs13/yolo_ros?branch=main) [![Last Commit](https://img.shields.io/github/last-commit/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/commits/main) [![GitHub issues](https://img.shields.io/github/issues/mgonzs13/yolo_ros)](https://github.com/mgonzs13/yolo_ros/issues) [![GitHub pull requests](https://img.shields.io/github/issues-pr/mgonzs13/yolo_ros)](https://github.com/mgonzs13/yolo_ros/pulls) [![Contributors](https://img.shields.io/github/contributors/mgonzs13/yolo_ros.svg)](https://github.com/mgonzs13/yolo_ros/graphs/contributors) [![Python Formatter Check](https://github.com/mgonzs13/yolo_ros/actions/workflows/python-formatter.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/python-formatter.yml?branch=main) [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest)
 
-| ROS 2 Distro |                          Branch                          |                                                                                                      Build status                                                                                                      |                                                               Docker Image                                                                | Documentation                                                                                                                                                |
-| :----------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|  **Humble**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |  [![Humble Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/humble-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/humble-docker-build.yml?branch=main)   |  [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-humble-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=humble)  | [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest) |
-|   **Iron**   | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |     [![Iron Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/iron-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/iron-docker-build.yml?branch=main)      |    [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-iron-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=iron)    | [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest) |
-|  **Jazzy**   | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |    [![Jazzy Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/jazzy-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/jazzy-docker-build.yml?branch=main)    |   [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-jazzy-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=jazzy)   | [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest) |
-|  **Kilted**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |  [![Kilted Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/kilted-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/kilted-docker-build.yml?branch=main)   |  [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-kilted-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=kilted)  | [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest) |
-| **Rolling**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) | [![Rolling Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/rolling-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/rolling-docker-build.yml?branch=main) | [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-rolling-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=rolling) | [![Doxygen Deployment](https://github.com/mgonzs13/yolo_ros/actions/workflows/doxygen-deployment.yml/badge.svg)](https://mgonzs13.github.io/yolo_ros/latest) |
+| ROS 2 Distro |                          Branch                          |                                                                                                      Build status                                                                                                      |                                                               Docker Image                                                                |
+| :----------: | :------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------: |
+|  **Humble**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |  [![Humble Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/humble-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/humble-docker-build.yml?branch=main)   |  [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-humble-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=humble)  |
+|   **Iron**   | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |     [![Iron Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/iron-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/iron-docker-build.yml?branch=main)      |    [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-iron-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=iron)    |
+|  **Jazzy**   | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |    [![Jazzy Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/jazzy-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/jazzy-docker-build.yml?branch=main)    |   [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-jazzy-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=jazzy)   |
+|  **Kilted**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) |  [![Kilted Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/kilted-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/kilted-docker-build.yml?branch=main)   |  [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-kilted-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=kilted)  |
+| **Lyrical**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) | [![Lyrical Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/lyrical-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/lyrical-docker-build.yml?branch=main) | [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-lyrical-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=lyrical) |
+| **Rolling**  | [`main`](https://github.com/mgonzs13/yolo_ros/tree/main) | [![Rolling Build](https://github.com/mgonzs13/yolo_ros/actions/workflows/rolling-docker-build.yml/badge.svg?branch=main)](https://github.com/mgonzs13/yolo_ros/actions/workflows/rolling-docker-build.yml?branch=main) | [![Docker Image](https://img.shields.io/badge/Docker%20Image%20-rolling-blue)](https://hub.docker.com/r/mgons/yolo_ros/tags?name=rolling) |
 
 </div>
 
@@ -22,17 +23,26 @@ ROS 2 wrap for YOLO models from [Ultralytics](https://github.com/ultralytics/ult
 2. [Docker](#docker)
 3. [Models](#models)
 4. [Usage](#usage)
-5. [Demos](#demos)
+5. [Lifecycle Nodes](#lifecycle-nodes)
+6. [Demos](#demos)
 
 ## Installation
 
 ```shell
+# Clone this repo
 cd ~/ros2_ws/src
 git clone https://github.com/mgonzs13/yolo_ros.git
-pip3 install -r yolo_ros/requirements.txt
+
+# Install uv and python dependencies
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.bashrc
+cd ~/ros2_ws/src/yolo_ros
+uv sync
+
+# Install rosdep dependencies and build
 cd ~/ros2_ws
 rosdep install --from-paths src --ignore-src -r -y
-colcon build
+colcon build && source install/setup.bash
 ```
 
 ## Docker
@@ -65,6 +75,7 @@ The compatible models for yolo_ros are the following:
 - [YOLOv12](https://docs.ultralytics.com/models/yolo12/)
 - [YOLO-World](https://docs.ultralytics.com/models/yolo-world/)
 - [YOLOE](https://docs.ultralytics.com/models/yoloe/)
+- [YOLOv26](https://docs.ultralytics.com/models/yolo26/)
 
 ## Usage
 
@@ -132,37 +143,42 @@ ros2 launch yolo_bringup yoloe.launch.py
 - **/yolo/detections_3d**: 3D objects detected. YOLO results are used to crop the depth images to create the 3D bounding boxes and 3D keypoints.
 - **/yolo/debug_image**: Debug images showing the detected and tracked objects. They can be visualized with rviz2.
 
+### Services
+
+- **/yolo/enable**: Service to enable or disable the detection node. Accepts a boolean value (True/False).
+- **/yolo/set_classes** (YOLOWorld only): Service to dynamically set the detection classes. This service is only available when using the YOLO-World model and allows you to update the list of object classes the model should detect without restarting the node.
+
 ### Parameters
 
 These are the parameters from the [yolo.launch.py](./yolo_bringup/launch/yolo.launch.py), used to launch all models. Check out the [Ultralytics page](https://docs.ultralytics.com/modes/predict/#inference-arguments) for more details.
 
 - **model_type**: Ultralytics model type (default: YOLO)
 - **model**: YOLO model (default: yolov8m.pt)
-- **tracker**: tracker file (default: bytetrack.yaml)
+- **tracker**: Tracker file (default: bytetrack.yaml)
 - **device**: GPU/CUDA (default: cuda:0)
+- **fuse_model**: Whether to fuse the YOLO model for inference optimization (default: False)
 - **yolo_encoding**: Encoding to convert input image before using YOLO (default: bgr8)
-- **enable**: whether to start YOLO enabled (default: True)
-- **threshold**: detection threshold (default: 0.5)
-- **iou**: intersection Over Union (IoU) threshold for Non-Maximum Suppression (NMS) (default: 0.7)
-- **imgsz_height**: image height for inference (default: 480)
-- **imgsz_width**: image width for inference (default: 640)
-- **half**: whether to enable half-precision (FP16) inference speeding up model inference with minimal impact on accuracy (default: False)
-- **max_det**: maximum number of detections allowed per image (default: 300)
-- **augment**: whether to enable test-time augmentation (TTA) for predictions improving detection robustness at the cost of speed (default: False)
-- **agnostic_nms**: whether to enable class-agnostic Non-Maximum Suppression (NMS) merging overlapping boxes of different classes (default: False)
-- **retina_masks**: whether to use high-resolution segmentation masks if available in the model, enhancing mask quality for segmentation (default: False)
-- **input_image_topic**: camera topic of RGB images (default: /camera/rgb/image_raw)
-- **image_reliability**: reliability for the image topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
-- **input_depth_topic**: camera topic of depth images (default: /camera/depth/image_raw)
-- **depth_image_reliability**: reliability for the depth image topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
-- **input_depth_info_topic**: camera topic for info data (default: /camera/depth/camera_info)
-- **depth_info_reliability**: reliability for the depth info topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
+- **enable**: Whether to start YOLO enabled (default: True)
+- **threshold**: Detection threshold (default: 0.5)
+- **iou**: Intersection Over Union (IoU) threshold for Non-Maximum Suppression (NMS) (default: 0.7)
+- **imgsz_height**: Image height for inference (default: 480)
+- **imgsz_width**: Image width for inference (default: 640)
+- **half**: Whether to enable half-precision (FP16) inference speeding up model inference with minimal impact on accuracy (default: False)
+- **max_det**: Maximum number of detections allowed per image (default: 300)
+- **augment**: Whether to enable test-time augmentation (TTA) for predictions improving detection robustness at the cost of speed (default: False)
+- **agnostic_nms**: Whether to enable class-agnostic Non-Maximum Suppression (NMS) merging overlapping boxes of different classes (default: False)
+- **retina_masks**: Whether to use high-resolution segmentation masks if available in the model, enhancing mask quality for segmentation (default: False)
+- **input_image_topic**: Camera topic of RGB images (default: /camera/rgb/image_raw)
+- **image_reliability**: Reliability for the image topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
+- **input_depth_topic**: Camera topic of depth images (default: /camera/depth/image_raw)
+- **depth_image_reliability**: Reliability for the depth image topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
+- **input_depth_info_topic**: Camera topic for info data (default: /camera/depth/camera_info)
+- **depth_info_reliability**: Reliability for the depth info topic: 0=system default, 1=Reliable, 2=Best Effort (default: 1)
 - **target_frame**: frame to transform the 3D boxes (default: base_link)
-- **depth_image_units_divisor**: divisor to convert the depth image into meters (default: 1000)
-- **maximum_detection_threshold**: maximum detection threshold in the z-axis (default: 0.3)
-- **use_tracking**: whether to activate tracking after detection (default: True)
-- **use_3d**: whether to activate 3D detections (default: False)
-- **use_debug**: whether to activate debug node (default: True)
+- **depth_image_units_divisor**: Divisor to convert the depth image into meters. Depends on the camera you are using (default: 1000)
+- **use_tracking**: Whether to activate tracking after detection (default: True)
+- **use_3d**: Whether to activate 3D detections (default: False)
+- **use_debug**: Whether to activate debug node (default: True)
 
 ## Lifecycle Nodes
 
@@ -175,12 +191,6 @@ These are some resource comparisons using the default yolov8m.pt model on a 30fp
 | -------- | ----------------------- | ---------- | --------------- |
 | Active   | 40-50% in one core      | 628 MB     | Up to 200 Mbps  |
 | Inactive | ~5-7% in one core       | 338 MB     | 0-20 Kbps       |
-
-### YOLO 3D
-
-```shell
-ros2 launch yolo_bringup yolov8.launch.py use_3d:=True
-```
 
 <p align="center">
   <img src="./docs/rqt_graph_yolov8_3d.png" width="100%" />
@@ -210,7 +220,7 @@ ros2 launch yolo_bringup yolo.launch.py model:=yolov8m-seg.pt
 
 ## Human Pose
 
-Online persons are detected along with their keypoints.
+Visible persons are detected along with their skeleton keypoints.
 
 ```shell
 ros2 launch yolo_bringup yolo.launch.py model:=yolov8m-pose.pt

@@ -46,14 +46,27 @@ from yolo_msgs.srv import SetClasses
 
 
 class YoloNode(LifecycleNode):
+    """
+    ROS 2 Lifecycle Node for YOLO object detection.
+
+    This node provides real-time object detection using various YOLO models
+    (YOLO, YOLOWorld, YOLOE). It subscribes to image topics and publishes
+    detection results including bounding boxes, masks, and keypoints.
+    """
 
     def __init__(self) -> None:
+        """
+        Initialize the YOLO node.
+
+        Declares all ROS parameters for model configuration and inference settings.
+        """
         super().__init__("yolo_node")
 
-        # params
+        # Params
         self.declare_parameter("model_type", "YOLO")
         self.declare_parameter("model", "yolov8m.pt")
         self.declare_parameter("device", "cuda:0")
+        self.declare_parameter("fuse_model", False)
         self.declare_parameter("yolo_encoding", "bgr8")
         self.declare_parameter("enable", True)
         self.declare_parameter("image_reliability", QoSReliabilityPolicy.BEST_EFFORT)
@@ -71,19 +84,30 @@ class YoloNode(LifecycleNode):
         self.type_to_model = {"YOLO": YOLO, "World": YOLOWorld, "YOLOE": YOLOE}
 
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
+        """
+        Configure lifecycle callback.
+
+        Retrieves all parameters and sets up publishers and QoS profiles.
+
+        @param state Current lifecycle state
+        @return Transition callback return status
+        """
         self.get_logger().info(f"[{self.get_name()}] Configuring...")
 
-        # model params
+        # Model params
         self.model_type = (
             self.get_parameter("model_type").get_parameter_value().string_value
         )
         self.model = self.get_parameter("model").get_parameter_value().string_value
         self.device = self.get_parameter("device").get_parameter_value().string_value
+        self.fuse_model = (
+            self.get_parameter("fuse_model").get_parameter_value().bool_value
+        )
         self.yolo_encoding = (
             self.get_parameter("yolo_encoding").get_parameter_value().string_value
         )
 
-        # inference params
+        # Inference params
         self.threshold = (
             self.get_parameter("threshold").get_parameter_value().double_value
         )
@@ -104,13 +128,13 @@ class YoloNode(LifecycleNode):
             self.get_parameter("retina_masks").get_parameter_value().bool_value
         )
 
-        # ros params
+        # ROS params
         self.enable = self.get_parameter("enable").get_parameter_value().bool_value
         self.reliability = (
             self.get_parameter("image_reliability").get_parameter_value().integer_value
         )
 
-        # detection pub
+        # Detection pub
         self.image_qos_profile = QoSProfile(
             reliability=self.reliability,
             history=QoSHistoryPolicy.KEEP_LAST,
@@ -127,16 +151,27 @@ class YoloNode(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
+        """
+        Activate lifecycle callback.
+
+        Loads the YOLO model, optionally fuses it, and creates subscriptions and services.
+
+        @param state Current lifecycle state
+        @return Transition callback return status
+        """
         self.get_logger().info(f"[{self.get_name()}] Activating...")
 
         try:
             self.yolo = self.type_to_model[self.model_type](self.model)
+            self.yolo.to(self.device)
         except FileNotFoundError:
             self.get_logger().error(f"Model file '{self.model}' does not exists")
             return TransitionCallbackReturn.ERROR
 
         # YOLOE does not support fusing
-        if isinstance(self.yolo, YOLO) or isinstance(self.yolo, YOLOWorld):
+        if self.fuse_model and (
+            isinstance(self.yolo, YOLO) or isinstance(self.yolo, YOLOWorld)
+        ):
             try:
                 self.get_logger().info("Trying to fuse model...")
                 self.yolo.fuse()
@@ -145,7 +180,8 @@ class YoloNode(LifecycleNode):
 
         self._enable_srv = self.create_service(SetBool, "enable", self.enable_cb)
 
-        if isinstance(self.yolo, YOLOWorld):
+        self._has_set_classes = hasattr(self.yolo, "set_classes")
+        if self._has_set_classes:
             self._set_classes_srv = self.create_service(
                 SetClasses, "set_classes", self.set_classes_cb
             )
@@ -160,6 +196,14 @@ class YoloNode(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_deactivate(self, state: LifecycleState) -> TransitionCallbackReturn:
+        """
+        Deactivate lifecycle callback.
+
+        Destroys the YOLO model, clears CUDA cache if applicable, and cleans up services and subscriptions.
+
+        @param state Current lifecycle state
+        @return Transition callback return status
+        """
         self.get_logger().info(f"[{self.get_name()}] Deactivating...")
 
         del self.yolo
@@ -170,7 +214,7 @@ class YoloNode(LifecycleNode):
         self.destroy_service(self._enable_srv)
         self._enable_srv = None
 
-        if isinstance(self.yolo, YOLOWorld):
+        if self._has_set_classes:
             self.destroy_service(self._set_classes_srv)
             self._set_classes_srv = None
 
@@ -183,10 +227,17 @@ class YoloNode(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_cleanup(self, state: LifecycleState) -> TransitionCallbackReturn:
+        """
+        Cleanup lifecycle callback.
+
+        Destroys publishers and cleans up resources.
+
+        @param state Current lifecycle state
+        @return Transition callback return status
+        """
         self.get_logger().info(f"[{self.get_name()}] Cleaning up...")
 
         self.destroy_publisher(self._pub)
-
         del self.image_qos_profile
 
         super().on_cleanup(state)
@@ -195,8 +246,16 @@ class YoloNode(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_shutdown(self, state: LifecycleState) -> TransitionCallbackReturn:
+        """
+        Shutdown lifecycle callback.
+
+        Performs final cleanup before node shutdown.
+
+        @param state Current lifecycle state
+        @return Transition callback return status
+        """
         self.get_logger().info(f"[{self.get_name()}] Shutting down...")
-        super().on_cleanup(state)
+        super().on_shutdown(state)
         self.get_logger().info(f"[{self.get_name()}] Shutted down")
         return TransitionCallbackReturn.SUCCESS
 
@@ -205,11 +264,26 @@ class YoloNode(LifecycleNode):
         request: SetBool.Request,
         response: SetBool.Response,
     ) -> SetBool.Response:
+        """
+        Service callback to enable or disable detection.
+
+        @param request Service request containing enable/disable flag
+        @param response Service response
+        @return Service response with success status
+        """
         self.enable = request.data
         response.success = True
         return response
 
     def parse_hypothesis(self, results: Results) -> List[Dict]:
+        """
+        Parse detection hypotheses from YOLO results.
+
+        Extracts class IDs, class names, and confidence scores from detection results.
+
+        @param results YOLO detection results
+        @return List of dictionaries containing class information and scores
+        """
 
         hypothesis_list = []
 
@@ -235,6 +309,15 @@ class YoloNode(LifecycleNode):
         return hypothesis_list
 
     def parse_boxes(self, results: Results) -> List[BoundingBox2D]:
+        """
+        Parse bounding boxes from YOLO results.
+
+        Converts YOLO bounding box format to ROS BoundingBox2D messages.
+        Supports both regular boxes and oriented bounding boxes (OBB).
+
+        @param results YOLO detection results
+        @return List of BoundingBox2D messages
+        """
 
         boxes_list = []
 
@@ -244,21 +327,21 @@ class YoloNode(LifecycleNode):
 
                 msg = BoundingBox2D()
 
-                # get boxes values
+                # Get boxes values
                 box = box_data.xywh[0]
                 msg.center.position.x = float(box[0])
                 msg.center.position.y = float(box[1])
                 msg.size.x = float(box[2])
                 msg.size.y = float(box[3])
 
-                # append msg
+                # Append msg
                 boxes_list.append(msg)
 
         elif results.obb:
             for i in range(results.obb.cls.shape[0]):
                 msg = BoundingBox2D()
 
-                # get boxes values
+                # Get boxes values
                 box = results.obb.xywhr[i]
                 msg.center.position.x = float(box[0])
                 msg.center.position.y = float(box[1])
@@ -266,12 +349,20 @@ class YoloNode(LifecycleNode):
                 msg.size.x = float(box[2])
                 msg.size.y = float(box[3])
 
-                # append msg
+                # Append msg
                 boxes_list.append(msg)
 
         return boxes_list
 
     def parse_masks(self, results: Results) -> List[Mask]:
+        """
+        Parse segmentation masks from YOLO results.
+
+        Converts YOLO mask format to ROS Mask messages containing polygon points.
+
+        @param results YOLO detection results
+        @return List of Mask messages
+        """
 
         masks_list = []
 
@@ -298,6 +389,14 @@ class YoloNode(LifecycleNode):
         return masks_list
 
     def parse_keypoints(self, results: Results) -> List[KeyPoint2DArray]:
+        """
+        Parse keypoints from YOLO results.
+
+        Extracts keypoint positions and confidence scores, filtering by threshold.
+
+        @param results YOLO detection results
+        @return List of KeyPoint2DArray messages
+        """
 
         keypoints_list = []
 
@@ -326,10 +425,17 @@ class YoloNode(LifecycleNode):
         return keypoints_list
 
     def image_cb(self, msg: Image) -> None:
+        """
+        Image callback for processing detections.
+
+        Receives images, runs YOLO inference, parses results, and publishes detections.
+
+        @param msg Image message to process
+        """
 
         if self.enable:
 
-            # convert image + predict
+            # Convert image + predict
             cv_image = self.cv_bridge.imgmsg_to_cv2(
                 msg, desired_encoding=self.yolo_encoding
             )
@@ -359,14 +465,14 @@ class YoloNode(LifecycleNode):
             if results.keypoints:
                 keypoints = self.parse_keypoints(results)
 
-            # create detection msgs
+            # Create detection msgs
             detections_msg = DetectionArray()
 
             for i in range(len(results)):
 
                 aux_msg = Detection()
 
-                if results.boxes or results.obb and hypothesis and boxes:
+                if (results.boxes or results.obb) and hypothesis and boxes:
                     aux_msg.class_id = hypothesis[i]["class_id"]
                     aux_msg.class_name = hypothesis[i]["class_name"]
                     aux_msg.score = hypothesis[i]["score"]
@@ -381,7 +487,7 @@ class YoloNode(LifecycleNode):
 
                 detections_msg.detections.append(aux_msg)
 
-            # publish detections
+            # Publish detections
             detections_msg.header = msg.header
             self._pub.publish(detections_msg)
 
@@ -393,9 +499,22 @@ class YoloNode(LifecycleNode):
         req: SetClasses.Request,
         res: SetClasses.Response,
     ) -> SetClasses.Response:
-        self.get_logger().info(f"Setting classes: {req.classes}")
-        self.yolo.set_classes(req.classes)
-        self.get_logger().info(f"New classes: {self.yolo.names}")
+        """
+        Service callback to set detection classes (YOLOWorld only).
+
+        Updates the classes that the model should detect.
+
+        @param req Service request containing list of class names
+        @param res Service response
+        @return Service response
+        """
+
+        try:
+            self.get_logger().info(f"Setting classes: {req.classes}")
+            self.yolo.set_classes(req.classes)
+            self.get_logger().info(f"New classes: {self.yolo.names}")
+        except Exception as e:
+            self.get_logger().error(f"Error setting classes: {e}")
         return res
 
 

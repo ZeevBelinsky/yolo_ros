@@ -1,25 +1,37 @@
 ARG ROS_DISTRO=humble
-FROM ros:${ROS_DISTRO} AS deps
+FROM ros:${ROS_DISTRO}-ros-core AS deps
+
+# Install system dependencies early for better caching
+RUN apt update && apt install -y --no-install-recommends \
+    git \
+    build-essential \
+    python3-rosdep \
+    python3-colcon-common-extensions \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
 
 # Create ros2_ws and copy files
 WORKDIR /root/ros2_ws
-SHELL ["/bin/bash", "-c"]
 COPY . /root/ros2_ws/src
 
-# Install dependencies
-RUN apt-get update
-RUN apt-get -y --quiet --no-install-recommends install python3 python3-pip
-RUN rosdep install --from-paths src --ignore-src -r -y
+# Install ROS dependencies
+RUN rosdep init && rosdep update --include-eol-distros
+RUN apt update && rosdep install --from-paths src --ignore-src -r -y && rm -rf /var/lib/apt/lists/*
 
-RUN if [ "$(lsb_release -rs)" = "24.04" ] || [ "$(lsb_release -rs)" = "24.10" ]; then \
-    pip3 install -r src/requirements.txt --break-system-packages --ignore-installed; \
-    else \
-    pip3 install -r src/requirements.txt; \
-    fi
+# Install Python packages with uv
+WORKDIR /root/ros2_ws/src/yolo_ros
+RUN uv sync
 
-# Build the ws with colcon
 FROM deps AS builder
-ARG CMAKE_BUILD_TYPE=Release
+
+SHELL ["/bin/bash", "-c"]
+
+# Build the workspace
+WORKDIR /root/ros2_ws
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build
 
 # Source the ROS 2 setup file

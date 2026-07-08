@@ -14,11 +14,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import os
+import glob
+import subprocess
+
 from launch import LaunchDescription, LaunchContext
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
@@ -27,6 +32,14 @@ def generate_launch_description():
 
         use_tracking = eval(context.perform_substitution(use_tracking))
         use_3d = eval(context.perform_substitution(use_3d))
+
+        share_dir = get_package_share_directory("yolo_ros")
+        subprocess.run(["uv", "sync", "--project", share_dir], check=True)
+        venv_site_pkgs = glob.glob(
+            os.path.join(share_dir, ".venv", "lib", "python*", "site-packages")
+        )
+        existing_pythonpath = os.environ.get("PYTHONPATH", "")
+        new_pythonpath = ":".join(venv_site_pkgs + [existing_pythonpath]).strip(":")
 
         model_type = LaunchConfiguration("model_type")
         model_type_cmd = DeclareLaunchArgument(
@@ -55,6 +68,13 @@ def generate_launch_description():
             "device",
             default_value="cuda:0",
             description="Device to use (GPU/CPU)",
+        )
+
+        fuse_model = LaunchConfiguration("fuse_model")
+        fuse_model_cmd = DeclareLaunchArgument(
+            "fuse_model",
+            default_value="False",
+            description="Whether to fuse the model for inference optimization",
         )
 
         yolo_encoding = LaunchConfiguration("yolo_encoding")
@@ -193,13 +213,6 @@ def generate_launch_description():
             description="Divisor used to convert the raw depth image values into metres",
         )
 
-        maximum_detection_threshold = LaunchConfiguration("maximum_detection_threshold")
-        maximum_detection_threshold_cmd = DeclareLaunchArgument(
-            "maximum_detection_threshold",
-            default_value="0.3",
-            description="Maximum detection threshold in the z axis",
-        )
-
         namespace = LaunchConfiguration("namespace")
         namespace_cmd = DeclareLaunchArgument(
             "namespace",
@@ -231,11 +244,13 @@ def generate_launch_description():
             executable="yolo_node",
             name="yolo_node",
             namespace=namespace,
+            additional_env={"PYTHONPATH": new_pythonpath},
             parameters=[
                 {
                     "model_type": model_type,
                     "model": model,
                     "device": device,
+                    "fuse_model": fuse_model,
                     "yolo_encoding": yolo_encoding,
                     "enable": enable,
                     "threshold": threshold,
@@ -258,6 +273,7 @@ def generate_launch_description():
             executable="tracking_node",
             name="tracking_node",
             namespace=namespace,
+            additional_env={"PYTHONPATH": new_pythonpath},
             parameters=[{"tracker": tracker, "image_reliability": image_reliability}],
             remappings=[("image_raw", input_image_topic)],
             condition=IfCondition(PythonExpression([str(use_tracking)])),
@@ -268,10 +284,10 @@ def generate_launch_description():
             executable="detect_3d_node",
             name="detect_3d_node",
             namespace=namespace,
+            additional_env={"PYTHONPATH": new_pythonpath},
             parameters=[
                 {
                     "target_frame": target_frame,
-                    "maximum_detection_threshold": maximum_detection_threshold,
                     "depth_image_units_divisor": depth_image_units_divisor,
                     "depth_image_reliability": depth_image_reliability,
                     "depth_info_reliability": depth_info_reliability,
@@ -290,6 +306,7 @@ def generate_launch_description():
             executable="debug_node",
             name="debug_node",
             namespace=namespace,
+            additional_env={"PYTHONPATH": new_pythonpath},
             parameters=[{"image_reliability": image_reliability}],
             remappings=[
                 ("image_raw", input_image_topic),
@@ -303,6 +320,7 @@ def generate_launch_description():
             model_cmd,
             tracker_cmd,
             device_cmd,
+            fuse_model_cmd,
             yolo_encoding_cmd,
             enable_cmd,
             threshold_cmd,
@@ -322,7 +340,6 @@ def generate_launch_description():
             depth_info_reliability_cmd,
             target_frame_cmd,
             depth_image_units_divisor_cmd,
-            maximum_detection_threshold_cmd,
             namespace_cmd,
             use_debug_cmd,
             yolo_node_cmd,
